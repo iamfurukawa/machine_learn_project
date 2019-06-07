@@ -2,6 +2,9 @@
 #pVitoria = sum(Y==1)/len(Y) 
 #pDerrota = sum(Y==0)/len(Y)
 
+import numpy as np
+import pandas as pd
+
 def calcularProbabilidades(X, Y):
     """
     CALCULARPROBABILIDADES Computa a probabilidade de ocorrencia de cada 
@@ -12,29 +15,31 @@ def calcularProbabilidades(X, Y):
     Cada vetor de saida tem dimensao (n x 1), sendo n a quantidade de atributos por amostra.
     """
     
-    #  inicializa os vetores de probabilidades
-    pAtrVitoria = np.zeros(X.shape[1])
-    pAtrDerrota = np.zeros(X.shape[1])
+    # Inicializa os vetores de probabilidades
+    probsPos = np.zeros(X.shape[1])
+    probsNeg = np.zeros(X.shape[1])
 
-    ########################## COMPLETE O CÓDIGO AQUI  ########################
-    #  Instrucoes: Complete o codigo para encontrar a probabilidade de
-    #                ocorrencia de um atributo para uma determinada classe.
-    #                Ex.: para a classe 1 (vitoria), devera ser computada um
-    #                vetor pAtrVitoria (n x 1) contendo n valores:
-    #                P(Atributo1=1|Classe=1), ..., P(Atributo5=1|Classe=1), e o
-    #                mesmo para a classe 0 (derrota):
-    #                P(Atributo1=1|Classe=0), ..., P(Atributo5=1|Classe=0).
-    # 
-    for column in range (0, X.shape[1]):
-        for line in range (0, X.shape[0]):
-            if line in np.where(Y == 1)[0] and X[line][column] == 1:
-                pAtrVitoria[column] += 1  
-            elif line in np.where(Y == 0)[0] and X[line][column] == 1:
-                pAtrDerrota[column] += 1
-                
-    pAtrVitoria /= len(np.where(Y == 1)[0])
-    pAtrDerrota /= len(np.where(Y == 0)[0])
-    ##########################################################################
+    # Seleciona os índices de cada uma das classes
+    idxPos = np.where(Y == 1)
+    idxNeg = np.where(Y == 0)
+    
+    # Calcula o número de ocorrências de valores nas colunas para cada classe
+    occPos = X[idxPos].sum(axis=0) + 1
+    occNeg = X[idxNeg].sum(axis=0) + 1
+    
+    print(X[idxPos].sum())
+    print(X[idxPos].shape[1])
 
-    return pAtrVitoria, pAtrDerrota
+    # Calcula as probabilidades
+    probsPos = occPos / (X[idxPos].sum() + X[idxPos].shape[1])
+    probsNeg = occNeg / (X[idxNeg].sum() + X[idxNeg].shape[1])
 
+    return probsPos, probsNeg
+
+def classificacao(x, probsPos, probsNeg, probClassPos, probClassNeg):
+    
+    # Realiza o cáculo das probabilidades
+    probPos = probClassPos * np.prod([ prob ** x[idx] for idx, prob in enumerate(probsPos) ])
+    probNeg = probClassNeg * np.prod([ prob ** x[idx] for idx, prob in enumerate(probsNeg) ])
+    
+    return probPos, probNeg
