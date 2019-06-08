@@ -26,9 +26,6 @@ def calcularProbabilidades(X, Y):
     # Calcula o número de ocorrências de valores nas colunas para cada classe
     occPos = X[idxPos].sum(axis=0) + 1
     occNeg = X[idxNeg].sum(axis=0) + 1
-    
-    print(X[idxPos].sum())
-    print(X[idxPos].shape[1])
 
     # Calcula as probabilidades
     probsPos = occPos / (X[idxPos].sum() + X[idxPos].shape[1])
