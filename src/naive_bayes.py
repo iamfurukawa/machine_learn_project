@@ -5,7 +5,7 @@
 import numpy as np
 import pandas as pd
 
-def calcularProbabilidades(X, Y):
+def mult_nb_calcular_probabilidades(X, Y):
     """
     CALCULARPROBABILIDADES Computa a probabilidade de ocorrencia de cada 
     atributo por rotulo possivel. A funcao retorna dois vetores de tamanho n
@@ -30,13 +30,20 @@ def calcularProbabilidades(X, Y):
     # Calcula as probabilidades
     probsPos = occPos / (X[idxPos].sum() + X[idxPos].shape[1])
     probsNeg = occNeg / (X[idxNeg].sum() + X[idxNeg].shape[1])
+    
+    return probsPos, probsNeg    
 
-    return probsPos, probsNeg
+# ================ Multinomial Naive Bayes ================
 
-def classificacao(x, probsPos, probsNeg, probClassPos, probClassNeg):
+def mult_nb_classificacao(x, probsPos, probsNeg, probClassPos, probClassNeg):
     
     # Realiza o cáculo das probabilidades
     probPos = probClassPos * np.prod([ prob ** x[idx] for idx, prob in enumerate(probsPos) ])
     probNeg = probClassNeg * np.prod([ prob ** x[idx] for idx, prob in enumerate(probsNeg) ])
     
-    return probPos, probNeg
+    pred = 0
+    
+    if (probPos >= probNeg):
+        pred = 1
+
+    return pred
