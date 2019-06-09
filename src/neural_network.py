@@ -45,76 +45,8 @@ def inicializaPesosAleatorios(L_in, L_out, randomSeed = None):
         
     return W
 
-def rna_treino(Thetas, tamanho_entrada, tamanho_intermediaria, num_classes, X, Y, vLambda):
-    print('\nTreinando a rede neural.......')
-    print('.......(Aguarde, pois esse processo por ser um pouco demorado.)\n')
-
-    # Apos ter completado toda a tarefa, mude o parametro MaxIter para
-    # um valor maior e verifique como isso afeta o treinamento.
-    MaxIter = 500
-
-    # Voce tambem pode testar valores diferentes para lambda.
-    vLambda = 1
-
-    # Minimiza a funcao de custo
-    result = scipy.optimize.minimize(fun=funcaoCusto_backp_reg, x0=Thetas, args=(tamanho_entrada, tamanho_intermediaria, num_classes, X, Y, vLambda),  
-                    method='TNC', jac=True, options={'maxiter': MaxIter})
-
-    # Coleta os pesos retornados pela função de minimização
-    nn_params = result.x
-
-    # Obtem Theta1 e Theta2 back a partir de rna_params
-    Theta1 = np.reshape( nn_params[0:tamanho_intermediaria*(tamanho_entrada + 1)], (tamanho_intermediaria, tamanho_entrada+1) )
-    Theta2 = np.reshape( nn_params[ tamanho_intermediaria*(tamanho_entrada + 1):], (num_classes, tamanho_intermediaria+1) )
-    
-    return Theta1, Theta2
-
 #-----------------------------
-# FOWARD PROPAGATION
-#-----------------------------
-'''
-Definião dos parâmetros
-    thetas: junção dos thetas nas camadas
-    tamanho_entrada: quantidade de neurônios na entrada
-    tamanho_intermediaria: quantidade de neurônios na camada intermediária
-    num_classes: número de classes
-    X: amostras
-    y: vetor contendo classes de cada amostra
-    vLambda: parâmetro de regularização
-'''
-def funcaoCusto_reg(thetas, tamanho_entrada, tamanho_intermediaria, num_classes, X, y, vLambda):
-    # Forma thetas para cada camada
-    Theta1 = np.reshape( thetas[0:tamanho_intermediaria*(tamanho_entrada + 1)], (tamanho_intermediaria, tamanho_entrada+1) )
-    Theta2 = np.reshape( thetas[ tamanho_intermediaria*(tamanho_entrada + 1):], (num_classes, tamanho_intermediaria+1) )
-    
-    # Inicialização de variáveis úteis e de retorno
-    m = X.shape[0]
-    
-    Y = np.zeros( (m, num_classes) )
-    for i in range (0, m):
-        Y[i][y[i] - 1] = 1
-        
-    J = 0;
-    
-    # === Foward Propagation ===
-    # insere bias = 1
-    X_bias = np.insert(X, 0, 1, axis=1)
-    
-    # rede oculta
-    a2 = sigmoid( np.dot (X_bias, Theta1.T) )
-    
-    # bias
-    a2 = np.insert(a2, 0, 1, axis=1)    
-    hip = sigmoid( np.dot(a2, Theta2.T) )
-    
-    # === Custo ===
-    regula = (vLambda / (2 * m) ) * ( np.sum(Theta1.T[1:,:] ** 2) + np.sum(Theta2.T[1:,:] ** 2) )
-    J = (1 / m) * np.sum( -Y * np.log(hip) - (1 - Y) * np.log(1 - hip) ) + regula
-    
-    return J
-
-#-----------------------------
-# BACK PROPAGATION
+# FOWARD + BACK PROPAGATION
 #-----------------------------
 '''
 Definião dos parâmetros
@@ -137,7 +69,7 @@ def funcaoCusto_backp_reg(thetas, tamanho_entrada, tamanho_intermediaria, num_cl
     
     Y = np.zeros( (m, num_classes) )
     for i in range (0, m):
-        Y[i][y[i] - 1] = 1
+        Y[i][y[i]] = 1
         
     J = 0;
     Theta1_grad = np.zeros(Theta1.shape)
@@ -177,7 +109,31 @@ def funcaoCusto_backp_reg(thetas, tamanho_entrada, tamanho_intermediaria, num_cl
     return J, grad
 
 #-----------------------------
-# Predição
+# TREINAMENTO MELHORES THETAS
+#-----------------------------
+
+def rna_treino(Thetas, tamanho_entrada, tamanho_intermediaria, num_classes, X, Y, vLambda):
+    print('\n Treinando a rede neural.......')
+
+    # Apos ter completado toda a tarefa, mude o parametro MaxIter para
+    # um valor maior e verifique como isso afeta o treinamento.
+    MaxIter = 500
+
+    # Minimiza a funcao de custo
+    result = scipy.optimize.minimize(fun=funcaoCusto_backp_reg, x0=Thetas, args=(tamanho_entrada, tamanho_intermediaria, num_classes, X, Y, vLambda),  
+                    method='TNC', jac=True, options={'maxiter': MaxIter})
+
+    # Coleta os pesos retornados pela função de minimização
+    nn_params = result.x
+
+    # Obtem Theta1 e Theta2 back a partir de rna_params
+    Theta1 = np.reshape( nn_params[0:tamanho_intermediaria*(tamanho_entrada + 1)], (tamanho_intermediaria, tamanho_entrada+1) )
+    Theta2 = np.reshape( nn_params[ tamanho_intermediaria*(tamanho_entrada + 1):], (num_classes, tamanho_intermediaria+1) )
+    
+    return Theta1, Theta2
+
+#-----------------------------
+# PREDIÇÃO
 #-----------------------------
 def rna_predicao(Theta1, Theta2, X):
     m = X.shape[0]
