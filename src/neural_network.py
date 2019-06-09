@@ -92,7 +92,7 @@ def funcaoCusto_reg(thetas, tamanho_entrada, tamanho_intermediaria, num_classes,
     
     Y = np.zeros( (m, num_classes) )
     for i in range (0, m):
-        Y[i][y[i] - 1] = 1
+        Y[i][y[i]] = 1
         
     J = 0;
     
@@ -137,7 +137,7 @@ def funcaoCusto_backp_reg(thetas, tamanho_entrada, tamanho_intermediaria, num_cl
     
     Y = np.zeros( (m, num_classes) )
     for i in range (0, m):
-        Y[i][y[i] - 1] = 1
+        Y[i][y[i]] = 1
         
     J = 0;
     Theta1_grad = np.zeros(Theta1.shape)
