@@ -11,15 +11,16 @@ def normalize(X):
 
     return (X - mu)/sigma, mu, sigma
 
-def save(m, listWords):
-    with open('./matriz.csv', 'w+', encoding='utf8') as stream:
-        for word in listWords:
+def save(m, features, name):
+    name_file = './{}.csv'.format(name)
+    with open(name_file, 'w+', encoding='utf8') as stream:
+        for word in matrix:
             stream.write(word)
             stream.write(',')
         stream.write('class')
         stream.write('\n')
 
-        for x in m:
+        for x in m.tolist():
             stream.write('\n')
             for y in x:
                 stream.write(str(y))

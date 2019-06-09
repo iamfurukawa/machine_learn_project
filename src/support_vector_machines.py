@@ -8,7 +8,7 @@ from svmutil import svm_train
 from svmutil import svm_predict
 from svmutil import svm_save_model
 
-def svm(X, Y, Xval, Yval):
+def svm_find(X, Y, Xval, Yval, C, G, K):
     """
     Retorna o melhor valor para os parâmetros custo e gamma do SVM radial.
     
@@ -31,11 +31,7 @@ def svm(X, Y, Xval, Yval):
     #inicializa as variáveis que deverão ser retornadas pela função
     custo = 1000
     gamma = 1000
-        
-    C = [0.01,0.03,0.1,0.3,1,3,10,30] #Cost
-    G = [0.01,0.03,0.1,0.3,1,3,10,30] #Gamma
-        
-    K = 2 #Kernel
+    
     acuracia = 0.0 #Acc
     acuracia_atual = 0.0 #Actual acc
     
@@ -48,6 +44,11 @@ def svm(X, Y, Xval, Yval):
                 custo = cost
                 gamma = gamm
     
-    ##########################################################################
+    return custo, gamma
 
+def svm_pred(X, Y, Xval, Yval):
+    print('non finalizada')
+    model = svm_train(Y, X, '-c %f -t %d -g %f' %(cost, K, gamm))
+    acuracia_atual = svm_predict(Yval, Xval, model)[1][0]
+            
     return custo, gamma
