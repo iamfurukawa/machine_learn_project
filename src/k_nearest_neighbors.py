@@ -45,7 +45,6 @@ def knn(x, X, Y, K):
     
     # Seleciona os K vizinhos mais próximos
     ind_viz = idx_dists[0:K]
-    print(distancias[ind_viz])
 	
     # Encontra a classe do novo exemplo utilizando moda
     classes, num_exs = np.unique(Y[ind_viz], return_counts=True)
