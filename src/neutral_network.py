@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-
+import numpy as np
+import pandas as pd
+import scipy
+import scipy.optimize
 
 #-----------------------------
 # PREPARAÇÕES
@@ -41,6 +44,30 @@ def inicializaPesosAleatorios(L_in, L_out, randomSeed = None):
         W = np.random.rand(L_out, 1 + L_in) * 2 * epsilon_init - epsilon_init
         
     return W
+
+def treino(tamanho_entrada, tamanho_intermediaria, num_classes, X, y, vLambda)
+    print('\nTreinando a rede neural.......')
+    print('.......(Aguarde, pois esse processo por ser um pouco demorado.)\n')
+
+    # Apos ter completado toda a tarefa, mude o parametro MaxIter para
+    # um valor maior e verifique como isso afeta o treinamento.
+    MaxIter = 500
+
+    # Voce tambem pode testar valores diferentes para lambda.
+    vLambda = 1
+
+    # Minimiza a funcao de custo
+    result = scipy.optimize.minimize(fun=funcaoCusto_backp_reg, x0=initial_rna_params, args=(tamanho_entrada, tamanho_intermediaria, num_classes, X, Y, vLambda),  
+                    method='TNC', jac=True, options={'maxiter': MaxIter})
+
+    # Coleta os pesos retornados pela função de minimização
+    nn_params = result.x
+
+    # Obtem Theta1 e Theta2 back a partir de rna_params
+    Theta1 = np.reshape( nn_params[0:hidden_layer_size*(input_layer_size + 1)], (hidden_layer_size, input_layer_size+1) )
+    Theta2 = np.reshape( nn_params[ hidden_layer_size*(input_layer_size + 1):], (num_labels, hidden_layer_size+1) )
+    
+    return Theta1, Theta2
 
 #-----------------------------
 # FOWARD PROPAGATION
@@ -149,3 +176,23 @@ def funcaoCusto_backp_reg(thetas, tamanho_entrada, tamanho_intermediaria, num_cl
 
     return J, grad
 
+#-----------------------------
+# Predição
+#-----------------------------
+def predicao(Theta1, Theta2, X):
+    m = X.shape[0]
+    num_labels = Theta2.shape[0]
+    
+    p = np.zeros(m)
+
+    a1 = np.hstack( [np.ones([m,1]),X] )
+    h1 = sigmoid( np.dot(a1,Theta1.T) )
+
+    a2 = np.hstack( [np.ones([m,1]),h1] ) 
+    h2 = sigmoid( np.dot(a2,Theta2.T) )
+    
+    p = np.argmax(h2,axis=1)
+    p = p+1
+    
+    print('\nAcuracia no conjunto de treinamento: %f\n'%( np.mean( p == Y ) * 100) )
+    print('\nAcuracia esperada: 99.56% (aproximadamente)')
