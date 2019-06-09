@@ -45,7 +45,7 @@ def inicializaPesosAleatorios(L_in, L_out, randomSeed = None):
         
     return W
 
-def treino(tamanho_entrada, tamanho_intermediaria, num_classes, X, y, vLambda)
+def rna_treino(Thetas, tamanho_entrada, tamanho_intermediaria, num_classes, X, Y, vLambda):
     print('\nTreinando a rede neural.......')
     print('.......(Aguarde, pois esse processo por ser um pouco demorado.)\n')
 
@@ -57,15 +57,15 @@ def treino(tamanho_entrada, tamanho_intermediaria, num_classes, X, y, vLambda)
     vLambda = 1
 
     # Minimiza a funcao de custo
-    result = scipy.optimize.minimize(fun=funcaoCusto_backp_reg, x0=initial_rna_params, args=(tamanho_entrada, tamanho_intermediaria, num_classes, X, Y, vLambda),  
+    result = scipy.optimize.minimize(fun=funcaoCusto_backp_reg, x0=Thetas, args=(tamanho_entrada, tamanho_intermediaria, num_classes, X, Y, vLambda),  
                     method='TNC', jac=True, options={'maxiter': MaxIter})
 
     # Coleta os pesos retornados pela função de minimização
     nn_params = result.x
 
     # Obtem Theta1 e Theta2 back a partir de rna_params
-    Theta1 = np.reshape( nn_params[0:hidden_layer_size*(input_layer_size + 1)], (hidden_layer_size, input_layer_size+1) )
-    Theta2 = np.reshape( nn_params[ hidden_layer_size*(input_layer_size + 1):], (num_labels, hidden_layer_size+1) )
+    Theta1 = np.reshape( nn_params[0:tamanho_intermediaria*(tamanho_entrada + 1)], (tamanho_intermediaria, tamanho_entrada+1) )
+    Theta2 = np.reshape( nn_params[ tamanho_intermediaria*(tamanho_entrada + 1):], (num_classes, tamanho_intermediaria+1) )
     
     return Theta1, Theta2
 
@@ -90,7 +90,7 @@ def funcaoCusto_reg(thetas, tamanho_entrada, tamanho_intermediaria, num_classes,
     # Inicialização de variáveis úteis e de retorno
     m = X.shape[0]
     
-    Y = np.zeros( (m, num_labels) )
+    Y = np.zeros( (m, num_classes) )
     for i in range (0, m):
         Y[i][y[i] - 1] = 1
         
@@ -135,7 +135,7 @@ def funcaoCusto_backp_reg(thetas, tamanho_entrada, tamanho_intermediaria, num_cl
     # Inicialização de variáveis úteis e de retorno
     m = X.shape[0]
     
-    Y = np.zeros( (m, num_labels) )
+    Y = np.zeros( (m, num_classes) )
     for i in range (0, m):
         Y[i][y[i] - 1] = 1
         
@@ -179,7 +179,7 @@ def funcaoCusto_backp_reg(thetas, tamanho_entrada, tamanho_intermediaria, num_cl
 #-----------------------------
 # Predição
 #-----------------------------
-def predicao(Theta1, Theta2, X):
+def rna_predicao(Theta1, Theta2, X):
     m = X.shape[0]
     num_labels = Theta2.shape[0]
     
@@ -192,7 +192,5 @@ def predicao(Theta1, Theta2, X):
     h2 = sigmoid( np.dot(a2,Theta2.T) )
     
     p = np.argmax(h2,axis=1)
-    p = p+1
     
-    print('\nAcuracia no conjunto de treinamento: %f\n'%( np.mean( p == Y ) * 100) )
-    print('\nAcuracia esperada: 99.56% (aproximadamente)')
+    return(p)
