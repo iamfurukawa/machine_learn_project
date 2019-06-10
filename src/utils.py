@@ -25,3 +25,12 @@ def save(m, features, name):
             for y in x:
                 stream.write(str(y))
                 stream.write(',')
+                
+def save_raw(m, name):
+    name_file = './{}.csv'.format(name)
+    with open(name_file, 'w+', encoding='utf8') as stream:
+        for x in m:
+            stream.write('\n')
+            for y in x:
+                stream.write(str(y))
+                stream.write(',')

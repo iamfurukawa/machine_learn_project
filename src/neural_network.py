@@ -113,11 +113,8 @@ def funcaoCusto_backp_reg(thetas, tamanho_entrada, tamanho_intermediaria, num_cl
 #-----------------------------
 
 def rna_treino(Thetas, tamanho_entrada, tamanho_intermediaria, num_classes, X, Y, vLambda):
-    print('\n Treinando a rede neural.......')
-
-    # Apos ter completado toda a tarefa, mude o parametro MaxIter para
-    # um valor maior e verifique como isso afeta o treinamento.
-    MaxIter = 500
+    #print('\n Treinando a rede neural.......')
+    MaxIter = 1000
 
     # Minimiza a funcao de custo
     result = scipy.optimize.minimize(fun=funcaoCusto_backp_reg, x0=Thetas, args=(tamanho_entrada, tamanho_intermediaria, num_classes, X, Y, vLambda),  

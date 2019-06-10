@@ -307,3 +307,4 @@ def mediaFolds( resultados, classes ):
     print('\t%1.3f       %1.3f      %1.3f      Média micro\n' % (np.mean(revocacao_microAverage), np.mean(precisao_microAverage), np.mean(fmedida_microAverage)) )
 
     print('\tAcuracia: %1.3f' %np.mean(acuracia))
+    return np.mean(acuracia)
