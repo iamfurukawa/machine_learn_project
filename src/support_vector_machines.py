@@ -8,7 +8,7 @@ from svmutil import svm_train
 from svmutil import svm_predict
 from svmutil import svm_save_model
 
-def svm_find(X, Y, Xval, Yval, C, G, K):
+def svm_encontrar_melhor(X, Y, Xval, Yval, C, G, K):
     """
     Retorna o melhor valor para os parâmetros custo e gamma do SVM radial.
     
@@ -21,6 +21,12 @@ def svm_find(X, Y, Xval, Yval, C, G, K):
     Xval : matriz com os dados de validação
     
     yval : vetor com as classes dos dados de validação
+    
+    C : lista com valores para custo
+    
+    G : lista com valores para gamma
+    
+    K : inteiro indicando o kernel a ser usado
     
     Retorno
     -------
@@ -37,7 +43,7 @@ def svm_find(X, Y, Xval, Yval, C, G, K):
     
     for cost in C:
         for gamm in G:
-            model = svm_train(Y, X, '-c %f -t %d -g %f' %(cost, K, gamm))
+            model = svm_train(Y, X, '-c %f -t %d -g %f -q' %(cost, K, gamm))
             acuracia_atual = svm_predict(Yval, Xval, model)[1][0]
             if acuracia < acuracia_atual:
                 acuracia = acuracia_atual
@@ -46,9 +52,31 @@ def svm_find(X, Y, Xval, Yval, C, G, K):
     
     return custo, gamma
 
-def svm_pred(X, Y, Xval, Yval):
-    print('non finalizada')
-    model = svm_train(Y, X, '-c %f -t %d -g %f' %(cost, K, gamm))
-    acuracia_atual = svm_predict(Yval, Xval, model)[1][0]
-            
-    return custo, gamma
+def svm_predizer(X, Y, X_teste, Y_teste, C, G, K):
+    """
+    Retorna o melhor valor para os parâmetros custo e gamma do SVM radial.
+    
+    Parâmetros
+    ----------
+    X : matriz com os dados de treinamento
+    
+    y : vetor com classes de cada dados de treinamento
+    
+    X_teste : amostra
+    
+    Y_teste : classe da amostra
+    
+    C : lista com valores para custo
+    
+    G : lista com valores para gamma
+    
+    K : inteiro indicando o kernel a ser usado
+    
+    Retorno
+    -------
+    resultado : classificação do SVM.
+    
+    """
+    model = svm_train(Y, X, '-c %f -t %d -g %f -q' %(C, K, G))
+    resultado = svm_predict(Y_teste, X_teste, model)
+    return resultado
