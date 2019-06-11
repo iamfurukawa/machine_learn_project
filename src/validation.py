@@ -308,3 +308,52 @@ def mediaFolds( resultados, classes ):
 
     print('\tAcuracia: %1.3f' %np.mean(acuracia))
     return np.mean(acuracia)
+
+def stratified_holdOut(target, pTrain):
+    """
+    Retorna os indices dos dados de treinamento e teste 
+    
+    Parâmetros
+    ----------   
+    target: vetor com as classes dos dados
+    
+    pTrain: porcentagem de dados de treinamento
+    
+    Retorno
+    -------
+    train_index: índices dos dados de treinamento 
+    test_index: índices dos dados de teste 
+    
+    """
+    
+    # inicializa as variaveis que precisam ser retornadas 
+    train_index = []
+    test_index = []
+
+    ########################## COMPLETE O CÓDIGO AQUI  ###############################
+    #  Instruções: Complete o codigo para retornar os índices dos dados de  
+    #              treinamento e dos dados de teste.
+    #              
+    #              Obs: - os conjuntos de treinamento e teste devem ser criados
+    #                     de maneira estratificada, ou seja, deve ser mantida a 
+    #                     a distribuição original dos dados de cada classe em cada 
+    #                     conjunto. Em outras palavras, o conjunto de treinamento deve ser
+    #                     formado por pTrain% dos dados da primeira classe, pTrain% dos dados da 
+    #                     segunda classe e assim por diante. 
+    #                   - a porcentagem de dados de teste para cada classe é igual a 
+    #                     1-pTrain (parametro da funcao que contem a porcentagem de dados 
+    #                     de treinamento)
+    
+    #Versão p/ N classes
+    for classe in np.unique(target).tolist():
+        idxClasse = np.argwhere(target == classe)
+        idxTrain  = int(len(idxClasse) * pTrain)
+        
+        train_index += sum(idxClasse[:idxTrain].tolist(), []) 
+        test_index  += sum(idxClasse[idxTrain:].tolist(), [])
+        
+    train_index = sorted(train_index)
+    test_index  = sorted(test_index)
+    ##################################################################################
+    
+    return train_index, test_index
